@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resenhudos FC - Prancheta Oficial</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --roxo: #7a00b8;
+            --roxo-escuro: #45006b;
+            --preto: #0d0d0d;
+            --preto-painel: #1a1a1a;
+            --branco: #ffffff;
+            --cinza: #cccccc;
+            --neon: 0 0 10px #7a00b8, 0 0 20px #7a00b8, 0 0 30px #7a00b8;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--preto);
+            background-image: radial-gradient(circle at 50% 0%, #2a0042 0%, var(--preto) 60%);
+            color: var(--branco);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--preto);
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--roxo);
+            box-shadow: 0 4px 15px rgba(122, 0, 184, 0.4);
+        }
+
+        h1 { 
+            font-family: 'Anton', sans-serif; 
+            margin: 0; 
+            font-size: 4rem;
+            text-transform: uppercase; 
+            letter-spacing: 4px;
+            color: var(--branco);
+            text-shadow: var(--neon);
+        }
+
+        header p {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.5rem;
+            color: var(--cinza);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 5px;
+        }
+
+        h2, h3 {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            color: var(--branco);
+            letter-spacing: 1px;
+            border-bottom: 2px solid var(--roxo);
+            padding-bottom: 5px;
+            display: inline-block;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .panel {
+            background-color: var(--preto-painel);
+            border: 2px solid var(--roxo-escuro);
+            border-radius: 12px;
+            padding: 25px;
+            flex: 1;
+            min-width: 300px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .panel::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--roxo), transparent);
+        }
+
+        label {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.1rem;
+            color: var(--cinza);
+            display: block;
+            margin-top: 10px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            margin-bottom: 15px;
+            background-color: #262626;
+            color: var(--branco);
+            border-radius: 6px;
+            border: 1px solid var(--roxo-escuro);
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--roxo);
+            box-shadow: 0 0 8px rgba(122, 0, 184, 0.5);
+        }
+
+        button {
+            background: linear-gradient(45deg, var(--roxo-escuro), var(--roxo));
+            color: var(--branco);
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 15px;
+            border: none;
+            border-radius: 6px;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        button:hover { 
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(122, 0, 184, 0.6);
+            background: linear-gradient(45deg, var(--roxo), #9900ff);
+        }
+        
+        #campinho-container {
+            flex: 2;
+            min-width: 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .info-header h2 { border: none; text-shadow: 0 0 5px var(--roxo); font-size: 2rem; margin-bottom: 0;}
+        .info-header p { font-size: 1.2rem; color: var(--cinza); margin-top: 5px; }
+
+        .campo {
+            width: 100%;
+            max-width: 420px;
+            height: 550px;
+            background: repeating-linear-gradient(0deg, #1a1a1a, #1a1a1a 10%, #141414 10%, #141414 20%);
+            border: 4px solid var(--branco);
+            position: relative;
+            border-radius: 8px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.8);
+            overflow: hidden;
+        }
+
+        .campo::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--branco);
+            transform: translateY(-50%);
+            box-shadow: 0 0 5px rgba(255,255,255,0.5);
+        }
+
+        .area { position: absolute; border: 2px solid var(--branco); left: 20%; width: 60%; background-color: rgba(255,255,255,0.03); }
+        .area-top { top: 0; height: 16%; border-top: none; }
+        .area-bottom { bottom: 0; height: 16%; border-bottom: none; }
+        .pequena-area-top { position: absolute; border: 2px solid var(--branco); top: 0; left: 35%; width: 30%; height: 6%; border-top: none; }
+        .pequena-area-bottom { position: absolute; border: 2px solid var(--branco); bottom: 0; left: 35%; width: 30%; height: 6%; border-bottom: none; }
+        
+        .circulo-central {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90px;
+            height: 90px;
+            border: 2px solid var(--branco);
+            border-radius: 50%;
+            box-shadow: inset 0 0 5px rgba(255,255,255,0.2), 0 0 5px rgba(255,255,255,0.2);
+            z-index: 1;
+        }
+        
+        .jogador-bola {
+            position: absolute;
+            width: 34px;
+            height: 34px;
+            background-color: var(--roxo);
+            border: 3px solid var(--branco);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px; /* Tamanho do número da camisa */
+            font-family: 'Oswald', sans-serif;
+            font-weight: bold;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.7), inset 0 -3px 5px rgba(0,0,0,0.3);
+            z-index: 10;
+            transition: all 0.5s ease;
+        }
+        .jogador-nome {
+            position: absolute;
+            top: 38px;
+            width: 100px;
+            text-align: center;
+            font-size: 13px;
+            font-family: 'Oswald', sans-serif;
+            letter-spacing: 0.5px;
+            color: var(--branco);
+            text-shadow: 1px 1px 3px #000, -1px -1px 3px #000, 0 0 5px #000;
+            background-color: rgba(0,0,0,0.6);
+            border-radius: 4px;
+            padding: 2px 0;
+        }
+
+        #area-tecnico { display: none; background-color: #1a0029; border-color: var(--branco); }
+        
+        .box-listas { display: flex; gap: 20px; width: 100%; margin-top: 25px; flex-wrap: wrap; }
+        .box-metade { flex: 1; min-width: 250px; }
+
+        .info-list {
+            list-style: none;
+            padding: 0;
+            font-size: 15px;
+            background-color: var(--preto-painel);
+            border: 1px solid var(--roxo-escuro);
+            border-radius: 8px;
+            padding: 10px;
+        }
+        .info-list li {
+            padding: 10px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+        }
+        .info-list li:last-child { border-bottom: none; }
+        
+        .btn-salvar { background: linear-gradient(45deg, #006600, #00aa00); margin-top: 20px;}
+        .btn-salvar:hover { background: linear-gradient(45deg, #008800, #00cc00); box-shadow: 0 6px 15px rgba(0, 170, 0, 0.6); }
+        .btn-sair { background: linear-gradient(45deg, #660000, #aa0000); margin-top: 10px;}
+        .btn-sair:hover { background: linear-gradient(45deg, #880000, #cc0000); box-shadow: 0 6px 15px rgba(170, 0, 0, 0.6); }
+
+        .linha-escalacao { display: flex; gap: 10px; align-items: center; }
+        .input-camisa { width: 70px; text-align: center; font-weight: bold; font-size: 1.1rem; }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Resenhudos FC</h1>
+    <p>O Terror dos Campeonatos</p>
+    <p>Site Oficial</p>
+</header>
+
+<div class="container">
+    <div class="panel">
+        <h2>Área do Jogador</h2>
+        <p style="color: var(--cinza); font-size: 0.9rem;">Inscreva-se para a partida de hoje!</p>
+        <label>Nome Completo:</label>
+        <input type="text" id="nome-jogador" placeholder="Ex: Ronaldinho Gaúcho">
+        
+        <label>Posição Preferida:</label>
+        <select id="posicao-jogador">
+            <option value="Ataque">Ataque</option>
+            <option value="Meio-Campo">Meio-Campo</option>
+            <option value="Defesa">Defesa</option>
+            <option value="Goleiro">Goleiro</option>
+        </select>
+        <button onclick="inscreverJogador()">Quero Jogar!</button>
+
+        <hr style="border: 1px solid var(--roxo-escuro); margin: 30px 0;">
+
+        <h3>Acesso do Técnico</h3>
+        <input type="password" id="senha-tecnico" placeholder="Digite a senha">
+        <button onclick="acessarTecnico()">Entrar na Prancheta</button>
+    </div>
+
+    <div id="campinho-container">
+        <div class="info-header" style="text-align: center; margin-bottom: 20px;">
+            <h2 id="display-camisa">Camisa 1 (Roxa)</h2>
+            <p id="display-formacao">Formação: Aguardando Técnico</p>
+        </div>
+        <div class="campo" id="campo-futebol">
+            <div class="area area-top"></div>
+            <div class="pequena-area-top"></div>
+            <div class="area area-bottom"></div>
+            <div class="pequena-area-bottom"></div>
+            <div class="circulo-central"></div>
+        </div>
+
+        <div class="box-listas">
+            <div class="box-metade">
+                <h3>Banco de Reservas</h3>
+                <ul class="info-list" id="lista-reservas-publica">
+                    <li style="color: var(--cinza); text-align: center;">Nenhum jogador inscrito ainda.</li>
+                </ul>
+            </div>
+            <div class="box-metade">
+                <h3>Funções Táticas</h3>
+                <ul class="info-list" id="lista-funcoes-publica">
+                    <li><span style="color: var(--roxo); font-weight:bold;">© Capitão:</span> <span id="pub-capitao">-</span></li>
+                    <li><span style="color: var(--roxo); font-weight:bold;">Falta Perto:</span> <span id="pub-falta-perto">-</span></li>
+                    <li><span style="color: var(--roxo); font-weight:bold;">Falta Longe:</span> <span id="pub-falta-longe">-</span></li>
+                    <li><span style="color: var(--roxo); font-weight:bold;">Tiro de Meta:</span> <span id="pub-tiro-meta">-</span></li>
+                    <li><span style="color: var(--roxo); font-weight:bold;">Escanteio Dir:</span> <span id="pub-esc-dir">-</span></li>
+                    <li><span style="color: var(--roxo); font-weight:bold;">Escanteio Esq:</span> <span id="pub-esc-esq">-</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel" id="area-tecnico">
+        <h2>Prancheta do Professor</h2>
+        
+        <label>Camisa:</label>
+        <select id="select-camisa" onchange="atualizarPrancheta()">
+            <option value="Camisa 1 (Principal Roxa)">Camisa 1 (Principal Roxa)</option>
+            <option value="Camisa 2 (Branca com Preto)">Camisa 2 (Branca com Preto)</option>
+        </select>
+
+        <label>Modalidade (Tamanho do Time):</label>
+        <select id="select-modalidade" onchange="mudarModalidade()">
+            <option value="11">Futebol de Campo (11 jogadores)</option>
+            <option value="7">Fut7 / Society (7 jogadores)</option>
+        </select>
+
+        <label>Formação:</label>
+        <select id="select-formacao" onchange="atualizarPrancheta()"></select>
+
+        <hr style="border: 1px solid var(--branco); margin: 25px 0; opacity: 0.2;">
+
+        <h3>Escalar Titulares</h3>
+        <p style="font-size: 13px; color: var(--cinza); margin-bottom: 20px;">Selecione o jogador e o número da camisa.</p>
+        <div id="escalacao-inputs"></div>
+
+        <hr style="border: 1px solid var(--branco); margin: 25px 0; opacity: 0.2;">
+
+        <h3>Batedores e Capitão</h3>
+        <p style="font-size: 13px; color: var(--cinza); margin-bottom: 20px;">Escolha quem assume a responsabilidade.</p>
+        
+        <label>Capitão da Equipe:</label>
+        <select id="select-capitao"></select>
+
+        <label>Falta de Perto:</label>
+        <select id="select-falta-perto"></select>
+
+        <label>Falta de Longe:</label>
+        <select id="select-falta-longe"></select>
+
+        <label>Tiro de Meta:</label>
+        <select id="select-tiro-meta"></select>
+
+        <label>Escanteio Direito:</label>
+        <select id="select-escanteio-dir"></select>
+
+        <label>Escanteio Esquerdo:</label>
+        <select id="select-escanteio-esq"></select>
+
+        <button onclick="salvarEscalacao()" class="btn-salvar">Colocar Time em Campo!</button>
+        <button onclick="sairTecnico()" class="btn-sair">Sair / Fechar Prancheta</button>
+    </div>
+</div>
+
+<script>
+    let jogadores = []; 
+    const formacoes = {
+        "11": {
+            "4-4-2 (Clássico)": [ {id: "gk", desc: "Goleiro", x: 50, y: 92}, {id: "ld", desc: "Lateral Dir", x: 85, y: 75}, {id: "z1", desc: "Zagueiro Dir", x: 65, y: 80}, {id: "z2", desc: "Zagueiro Esq", x: 35, y: 80}, {id: "le", desc: "Lateral Esq", x: 15, y: 75}, {id: "md", desc: "Meia Dir", x: 80, y: 50}, {id: "v1", desc: "Volante Dir", x: 60, y: 55}, {id: "v2", desc: "Volante Esq", x: 40, y: 55}, {id: "me", desc: "Meia Esq", x: 20, y: 50}, {id: "a1", desc: "Atacante Dir", x: 60, y: 20}, {id: "a2", desc: "Atacante Esq", x: 40, y: 20} ],
+            "4-3-3 (Ofensivo)": [ {id: "gk", desc: "Goleiro", x: 50, y: 92}, {id: "ld", desc: "Lateral Dir", x: 85, y: 75}, {id: "z1", desc: "Zagueiro Dir", x: 65, y: 80}, {id: "z2", desc: "Zagueiro Esq", x: 35, y: 80}, {id: "le", desc: "Lateral Esq", x: 15, y: 75}, {id: "v1", desc: "Volante", x: 50, y: 60}, {id: "m1", desc: "Meia Dir", x: 70, y: 45}, {id: "m2", desc: "Meia Esq", x: 30, y: 45}, {id: "pd", desc: "Ponta Dir", x: 80, y: 20}, {id: "ca", desc: "Centroavante", x: 50, y: 15}, {id: "pe", desc: "Ponta Esq", x: 20, y: 20} ],
+            "4-2-3-1 (Equilibrado)": [ {id: "gk", desc: "Goleiro", x: 50, y: 92}, {id: "ld", desc: "Lateral Dir", x: 85, y: 75}, {id: "z1", desc: "Zagueiro Dir", x: 65, y: 80}, {id: "z2", desc: "Zagueiro Esq", x: 35, y: 80}, {id: "le", desc: "Lateral Esq", x: 15, y: 75}, {id: "v1", desc: "Volante Dir", x: 60, y: 60}, {id: "v2", desc: "Volante Esq", x: 40, y: 60}, {id: "md", desc: "Meia Dir", x: 80, y: 38}, {id: "mc", desc: "Meia Central", x: 50, y: 40}, {id: "me", desc: "Meia Esq", x: 20, y: 38}, {id: "ca", desc: "Centroavante", x: 50, y: 15} ],
+            "3-5-2 (Dominância)": [ {id: "gk", desc: "Goleiro", x: 50, y: 92}, {id: "z1", desc: "Zagueiro Dir", x: 75, y: 80}, {id: "zc", desc: "Zagueiro Central", x: 50, y: 82}, {id: "z2", desc: "Zagueiro Esq", x: 25, y: 80}, {id: "ald", desc: "Ala Dir", x: 85, y: 55}, {id: "v1", desc: "Volante Dir", x: 65, y: 60}, {id: "v2", desc: "Volante Esq", x: 35, y: 60}, {id: "ale", desc: "Ala Esq", x: 15, y: 55}, {id: "mc", desc: "Meia Armador", x: 50, y: 42}, {id: "a1", desc: "Atacante Dir", x: 60, y: 20}, {id: "a2", desc: "Atacante Esq", x: 40, y: 20} ],
+            "4-1-4-1 (Controle)": [ {id: "gk", desc: "Goleiro", x: 50, y: 92}, {id: "ld", desc: "Lateral Dir", x: 85, y: 75}, {id: "z1", desc: "Zagueiro Dir", x: 65, y: 80}, {id: "z2", desc: "Zagueiro Esq", x: 35, y: 80}, {id: "le", desc: "Lateral Esq", x: 15, y: 75}, {id: "v", desc: "Volante", x: 50, y: 63}, {id: "md", desc: "Meia Aberto Dir", x: 80, y: 45}, {id: "mc1", desc: "Meia Central Dir", x: 65, y: 45}, {id: "mc2", desc: "Meia Central Esq", x: 35, y: 45}, {id: "me", desc: "Meia Aberto Esq", x: 20, y: 45}, {id: "ca", desc: "Centroavante", x: 50, y: 15} ],
+            "3-4-3 (Agressivo)": [ {id: "gk", desc: "Goleiro", x: 50, y: 92}, {id: "z1", desc: "Zagueiro Dir", x: 75, y: 80}, {id: "zc", desc: "Zagueiro Central", x: 50, y: 82}, {id: "z2", desc: "Zagueiro Esq", x: 25, y: 80}, {id: "md", desc: "Meia Dir", x: 80, y: 55}, {id: "v1", desc: "Meia Central", x: 60, y: 55}, {id: "v2", desc: "Meia Central", x: 40, y: 55}, {id: "me", desc: "Meia Esq", x: 20, y: 55}, {id: "pd", desc: "Ponta Dir", x: 75, y: 25}, {id: "ca", desc: "Centroavante", x: 50, y: 15}, {id: "pe", desc: "Ponta Esq", x: 25, y: 25} ],
+            "5-3-2 (Retranca)": [ {id: "gk", desc: "Goleiro", x: 50, y: 92}, {id: "ld", desc: "Ala Dir", x: 90, y: 70}, {id: "z1", desc: "Zagueiro Dir", x: 70, y: 80}, {id: "zc", desc: "Zagueiro Central", x: 50, y: 82}, {id: "z2", desc: "Zagueiro Esq", x: 30, y: 80}, {id: "le", desc: "Ala Esq", x: 10, y: 70}, {id: "m1", desc: "Meia Dir", x: 70, y: 50}, {id: "mc", desc: "Meia Central", x: 50, y: 52}, {id: "m2", desc: "Meia Esq", x: 30, y: 50}, {id: "a1", desc: "Atacante Dir", x: 60, y: 20}, {id: "a2", desc: "Atacante Esq", x: 40, y: 20} ],
+            "4-5-1 (Meio Cheio)": [ {id: "gk", desc: "Goleiro", x: 50, y: 92}, {id: "ld", desc: "Lateral Dir", x: 85, y: 75}, {id: "z1", desc: "Zagueiro Dir", x: 65, y: 80}, {id: "z2", desc: "Zagueiro Esq", x: 35, y: 80}, {id: "le", desc: "Lateral Esq", x: 15, y: 75}, {id: "md", desc: "Meia Dir", x: 80, y: 45}, {id: "v1", desc: "Volante Dir", x: 60, y: 55}, {id: "v2", desc: "Volante Esq", x: 40, y: 55}, {id: "mc", desc: "Meia Armador", x: 50, y: 40}, {id: "me", desc: "Meia Esq", x: 20, y: 45}, {id: "ca", desc: "Atacante Isolado", x: 50, y: 15} ]
+        },
+        "7": {
+            "3-2-1 (Muralha)": [ {id: "gk", desc: "Goleiro", x: 50, y: 90}, {id: "z1", desc: "Zagueiro Dir", x: 75, y: 75}, {id: "zc", desc: "Zagueiro Central", x: 50, y: 80}, {id: "z2", desc: "Zagueiro Esq", x: 25, y: 75}, {id: "m1", desc: "Meia Dir", x: 70, y: 45}, {id: "m2", desc: "Meia Esq", x: 30, y: 45}, {id: "ata", desc: "Atacante", x: 50, y: 15} ],
+            "2-3-1 (Aberto)": [ {id: "gk", desc: "Goleiro", x: 50, y: 90}, {id: "z1", desc: "Zagueiro Dir", x: 65, y: 80}, {id: "z2", desc: "Zagueiro Esq", x: 35, y: 80}, {id: "m1", desc: "Ala Dir", x: 85, y: 45}, {id: "mc", desc: "Meia Central", x: 50, y: 50}, {id: "m2", desc: "Ala Esq", x: 15, y: 45}, {id: "ata", desc: "Atacante", x: 50, y: 15} ],
+            "2-2-2 (Quadrado Mágico)": [ {id: "gk", desc: "Goleiro", x: 50, y: 90}, {id: "z1", desc: "Zagueiro Dir", x: 65, y: 80}, {id: "z2", desc: "Zagueiro Esq", x: 35, y: 80}, {id: "m1", desc: "Meia Dir", x: 65, y: 50}, {id: "m2", desc: "Meia Esq", x: 35, y: 50}, {id: "a1", desc: "Atacante Dir", x: 65, y: 20}, {id: "a2", desc: "Atacante Esq", x: 35, y: 20} ],
+            "3-1-2 (Tranca e Corre)": [ {id: "gk", desc: "Goleiro", x: 50, y: 90}, {id: "z1", desc: "Zagueiro Dir", x: 75, y: 75}, {id: "zc", desc: "Zagueiro Central", x: 50, y: 80}, {id: "z2", desc: "Zagueiro Esq", x: 25, y: 75}, {id: "v", desc: "Volante / Meia", x: 50, y: 55}, {id: "a1", desc: "Atacante Dir", x: 65, y: 20}, {id: "a2", desc: "Atacante Esq", x: 35, y: 20} ],
+            "1-4-1 (Linha de Quatro)": [ {id: "gk", desc: "Goleiro", x: 50, y: 90}, {id: "z", desc: "Zagueiro Fixo", x: 50, y: 80}, {id: "md", desc: "Ala Dir", x: 80, y: 45}, {id: "v1", desc: "Meia Central Dir", x: 60, y: 50}, {id: "v2", desc: "Meia Central Esq", x: 40, y: 50}, {id: "me", desc: "Ala Esq", x: 20, y: 45}, {id: "a", desc: "Atacante", x: 50, y: 15} ],
+            "1-3-2 (Losango)": [ {id: "gk", desc: "Goleiro", x: 50, y: 90}, {id: "z", desc: "Zagueiro", x: 50, y: 80}, {id: "md", desc: "Meia Dir", x: 80, y: 55}, {id: "mc", desc: "Meia Armador", x: 50, y: 45}, {id: "me", desc: "Meia Esq", x: 20, y: 55}, {id: "a1", desc: "Atacante Dir", x: 65, y: 15}, {id: "a2", desc: "Atacante Esq", x: 35, y: 15} ],
+            "2-1-3 (Tudo pro Ataque)": [ {id: "gk", desc: "Goleiro", x: 50, y: 90}, {id: "z1", desc: "Zagueiro Dir", x: 65, y: 80}, {id: "z2", desc: "Zagueiro Esq", x: 35, y: 80}, {id: "mc", desc: "Meia Ligação", x: 50, y: 55}, {id: "pd", desc: "Ponta Dir", x: 80, y: 25}, {id: "ca", desc: "Centroavante", x: 50, y: 15}, {id: "pe", desc: "Ponta Esq", x: 20, y: 25} ],
+            "4-1-1 (Ônibus na Zaga)": [ {id: "gk", desc: "Goleiro", x: 50, y: 90}, {id: "ld", desc: "Lateral Dir", x: 85, y: 75}, {id: "z1", desc: "Zagueiro Dir", x: 65, y: 80}, {id: "z2", desc: "Zagueiro Esq", x: 35, y: 80}, {id: "le", desc: "Lateral Esq", x: 15, y: 75}, {id: "v", desc: "Volante", x: 50, y: 55}, {id: "a", desc: "Atacante Sozinho", x: 50, y: 15} ]
+        }
+    };
+
+    // Agora timeAtual guarda um objeto { id_jogador: "123", numero: "10" }
+    let timeAtual = {}; 
+    let funcoesTaticas = { capitao: "", faltaPerto: "", faltaLonge: "", tiroMeta: "", escDir: "", escEsq: "" };
+
+    function inscreverJogador() {
+        const nomeInput = document.getElementById("nome-jogador");
+        const posInput = document.getElementById("posicao-jogador");
+        
+        if (nomeInput.value.trim() === "") {
+            alert("Por favor, digite o nome completo!");
+            return;
+        }
+
+        const novoJogador = {
+            id: Date.now().toString(),
+            nome: nomeInput.value,
+            pref: posInput.value
+        };
+
+        jogadores.push(novoJogador);
+        alert(`Bem-vindo, ${novoJogador.nome}! Você quer jogar na ${novoJogador.pref}. O professor vai decidir se você joga.`);
+        
+        nomeInput.value = "";
+        
+        if (document.getElementById("area-tecnico").style.display === "block") {
+            atualizarPrancheta();
+            atualizarSelectsDeFuncoes();
+        }
+        renderizarCampo();
+    }
+
+    function acessarTecnico() {
+        const senha = document.getElementById("senha-tecnico").value;
+        if (senha === "resenhudos2026") {
+            document.getElementById("area-tecnico").style.display = "block";
+            document.getElementById("senha-tecnico").value = "";
+            mudarModalidade(); 
+            atualizarSelectsDeFuncoes();
+            alert("Bem-vindo, Professor! A prancheta é sua.");
+        } else {
+            alert("Senha incorreta. Só o técnico sabe a senha!");
+        }
+    }
+
+    function sairTecnico() {
+        document.getElementById("area-tecnico").style.display = "none";
+    }
+
+    function mudarModalidade() {
+        const modalidade = document.getElementById("select-modalidade").value;
+        const selectFormacao = document.getElementById("select-formacao");
+        selectFormacao.innerHTML = ""; 
+
+        const opcoes = Object.keys(formacoes[modalidade]);
+        opcoes.forEach(form => {
+            const opt = document.createElement("option");
+            opt.value = form;
+            opt.textContent = form;
+            selectFormacao.appendChild(opt);
+        });
+
+        timeAtual = {};
+        atualizarPrancheta();
+    }
+
+    function atualizarPrancheta() {
+        const modalidade = document.getElementById("select-modalidade").value;
+        const formacao = document.getElementById("select-formacao").value;
+        const posicoes = formacoes[modalidade][formacao];
+        const containerInputs = document.getElementById("escalacao-inputs");
+        
+        containerInputs.innerHTML = ""; 
+
+        posicoes.forEach(pos => {
+            const label = document.createElement("label");
+            label.textContent = pos.desc + ":";
+            
+            const divLinha = document.createElement("div");
+            divLinha.className = "linha-escalacao";
+
+            const select = document.createElement("select");
+            select.id = "pos-" + pos.id;
+            select.innerHTML = `<option value="">-- Selecione o Titular --</option>`;
+            
+            const inputNum = document.createElement("input");
+            inputNum.type = "number";
+            inputNum.id = "num-" + pos.id;
+            inputNum.className = "input-camisa";
+            inputNum.placeholder = "Nº";
+
+            jogadores.forEach(jog => {
+                const opt = document.createElement("option");
+                opt.value = jog.id;
+                opt.textContent = `${jog.nome} (${jog.pref})`; 
+                if (timeAtual[pos.id] && timeAtual[pos.id].id === jog.id) {
+                    opt.selected = true;
+                }
+                select.appendChild(opt);
+            });
+
+            if (timeAtual[pos.id] && timeAtual[pos.id].numero) {
+                inputNum.value = timeAtual[pos.id].numero;
+            }
+
+            divLinha.appendChild(select);
+            divLinha.appendChild(inputNum);
+            containerInputs.appendChild(label);
+            containerInputs.appendChild(divLinha);
+        });
+    }
+
+    function atualizarSelectsDeFuncoes() {
+        const ids = ['select-capitao', 'select-falta-perto', 'select-falta-longe', 'select-tiro-meta', 'select-escanteio-dir', 'select-escanteio-esq'];
+        
+        ids.forEach(id => {
+            const select = document.getElementById(id);
+            const valorSalvo = select.value; // guarda o que tava antes pra não apagar atoa
+            select.innerHTML = `<option value="">-- Selecione --</option>`;
+            
+            jogadores.forEach(jog => {
+                const opt = document.createElement("option");
+                opt.value = jog.id;
+                opt.textContent = jog.nome;
+                if (valorSalvo === jog.id) opt.selected = true;
+                select.appendChild(opt);
+            });
+        });
+    }
+
+    function salvarEscalacao() {
+        const modalidade = document.getElementById("select-modalidade").value;
+        const formacao = document.getElementById("select-formacao").value;
+        const posicoes = formacoes[modalidade][formacao];
+
+        document.getElementById("display-camisa").textContent = document.getElementById("select-camisa").value;
+        document.getElementById("display-formacao").textContent = `Formação: ${formacao} (${modalidade} jogadores)`;
+
+        timeAtual = {};
+        posicoes.forEach(pos => {
+            const select = document.getElementById("pos-" + pos.id);
+            const inputNum = document.getElementById("num-" + pos.id);
+            if (select.value) {
+                timeAtual[pos.id] = {
+                    id: select.value,
+                    numero: inputNum.value || "-" // Se não colocar numero, fica um tracinho
+                };
+            }
+        });
+
+        // Salva funções
+        funcoesTaticas.capitao = document.getElementById("select-capitao").value;
+        funcoesTaticas.faltaPerto = document.getElementById("select-falta-perto").value;
+        funcoesTaticas.faltaLonge = document.getElementById("select-falta-longe").value;
+        funcoesTaticas.tiroMeta = document.getElementById("select-tiro-meta").value;
+        funcoesTaticas.escDir = document.getElementById("select-escanteio-dir").value;
+        funcoesTaticas.escEsq = document.getElementById("select-escanteio-esq").value;
+
+        renderizarCampo();
+        alert("Time escalado e funções definidas!");
+    }
+
+    function obterNomeJogador(id) {
+        if (!id) return "-";
+        const j = jogadores.find(x => x.id === id);
+        return j ? j.nome.split(" ")[0] : "-";
+    }
+
+    function renderizarCampo() {
+        const campo = document.getElementById("campo-futebol");
+        const elementosAntigos = campo.querySelectorAll('.jogador-bola');
+        elementosAntigos.forEach(el => el.remove());
+
+        const modalidade = document.getElementById("select-modalidade") ? document.getElementById("select-modalidade").value : "11";
+        const formacaoTexto = document.getElementById("display-formacao").textContent;
+        
+        let formacao = Object.keys(formacoes[modalidade])[0]; 
+        Object.keys(formacoes[modalidade]).forEach(f => {
+            if(formacaoTexto.includes(f)) formacao = f;
+        });
+
+        const posicoes = formacoes[modalidade][formacao];
+        
+        // Extrai apenas os IDs dos titulares pra lista de reservas
+        let titularesIds = [];
+        Object.values(timeAtual).forEach(t => titularesIds.push(t.id));
+
+        if(posicoes) {
+            posicoes.forEach(pos => {
+                const bola = document.createElement("div");
+                bola.className = "jogador-bola";
+                bola.style.left = pos.x + "%";
+                bola.style.top = pos.y + "%";
+                
+                const camisa = document.getElementById("display-camisa").textContent;
+                if(camisa.includes("2")) {
+                    bola.style.backgroundColor = "var(--branco)";
+                    bola.style.color = "var(--preto)";
+                    bola.style.borderColor = "var(--preto)";
+                }
+
+                const dadosJogador = timeAtual[pos.id];
+                let nomeExibir = "?";
+                let numExibir = "";
+
+                if(dadosJogador) {
+                    nomeExibir = obterNomeJogador(dadosJogador.id);
+                    numExibir = dadosJogador.numero;
+                }
+
+                bola.textContent = numExibir; // Numero dentro da bolinha
+
+                const nomeDiv = document.createElement("div");
+                nomeDiv.className = "jogador-nome";
+                nomeDiv.textContent = nomeExibir;
+                bola.appendChild(nomeDiv);
+
+                campo.appendChild(bola);
+            });
+        }
+
+        // Renderiza lista de reservas
+        const listaReservas = document.getElementById("lista-reservas-publica");
+        listaReservas.innerHTML = "";
+        let temReserva = false;
+
+        jogadores.forEach(j => {
+            if (!titularesIds.includes(j.id)) {
+                temReserva = true;
+                const li = document.createElement("li");
+                li.innerHTML = `<span><b>${j.nome}</b></span> <span style="color: var(--roxo); font-size: 0.9em;">(${j.pref})</span>`;
+                listaReservas.appendChild(li);
+            }
+        });
+
+        if(!temReserva && jogadores.length > 0) {
+            listaReservas.innerHTML = "<li style='color: var(--cinza); text-align: center; justify-content: center;'>Sem jogadores no banco.</li>";
+        } else if (jogadores.length === 0) {
+            listaReservas.innerHTML = "<li style='color: var(--cinza); text-align: center; justify-content: center;'>Nenhum jogador inscrito ainda.</li>";
+        }
+
+        // Renderiza Funções Táticas na tela pro público ver
+        document.getElementById("pub-capitao").textContent = obterNomeJogador(funcoesTaticas.capitao);
+        document.getElementById("pub-falta-perto").textContent = obterNomeJogador(funcoesTaticas.faltaPerto);
+        document.getElementById("pub-falta-longe").textContent = obterNomeJogador(funcoesTaticas.faltaLonge);
+        document.getElementById("pub-tiro-meta").textContent = obterNomeJogador(funcoesTaticas.tiroMeta);
+        document.getElementById("pub-esc-dir").textContent = obterNomeJogador(funcoesTaticas.escDir);
+        document.getElementById("pub-esc-esq").textContent = obterNomeJogador(funcoesTaticas.escEsq);
+    }
+
+    renderizarCampo();
+</script>
+
+</body>
+</html>
