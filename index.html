@@ -255,6 +255,7 @@
             border-bottom: 1px solid #333;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
         .info-list li:last-child { border-bottom: none; }
         
@@ -294,13 +295,13 @@
         <hr style="border: 1px solid var(--roxo-escuro); margin: 30px 0;">
 
         <h3>Acesso do Técnico</h3>
-        <input type="password" id="senha-tecnico" placeholder="Digite a senha">
+        <input type="password" id="senha-tecnico" placeholder="Digite a senha (resenhudos2026)">
         <button onclick="acessarTecnico()">Entrar na Prancheta</button>
     </div>
 
     <div id="campinho-container">
         <div class="info-header" style="text-align: center; margin-bottom: 20px;">
-            <h2 id="display-camisa">Camisa 1 (Preta)</h2>
+            <h2 id="display-camisa">Camisa 1 (Roxa)</h2>
             <p id="display-formacao">Formação: Aguardando Técnico</p>
         </div>
         <div class="campo" id="campo-futebol">
@@ -337,8 +338,8 @@
         
         <label>Camisa:</label>
         <select id="select-camisa" onchange="atualizarPrancheta()">
-            <option value="Camisa 1 (Principal Roxa)">Camisa 1 (Principal Preta)</option>
-            <option value="Camisa 2 (Branca com Preto)">Camisa 2 (Branca)</option>
+            <option value="Camisa 1 (Principal Roxa)">Camisa 1 (Principal Roxa)</option>
+            <option value="Camisa 2 (Branca com Preto)">Camisa 2 (Branca com Preto)</option>
         </select>
 
         <label>Modalidade (Tamanho do Time):</label>
@@ -349,6 +350,12 @@
 
         <label>Formação:</label>
         <select id="select-formacao" onchange="atualizarPrancheta()"></select>
+
+        <hr style="border: 1px solid var(--branco); margin: 25px 0; opacity: 0.2;">
+
+        <h3>Gerenciar Inscritos (Remover)</h3>
+        <p style="font-size: 13px; color: var(--cinza); margin-bottom: 15px;">Corte jogadores faltosos do dia aqui.</p>
+        <ul class="info-list" id="lista-gerenciar-jogadores"></ul>
 
         <hr style="border: 1px solid var(--branco); margin: 25px 0; opacity: 0.2;">
 
@@ -430,7 +437,6 @@
             pref: posInput.value
         };
 
-        // Envia a inscrição para a planilha do Google
         try {
             await fetch(URL_DA_SUA_API, {
                 method: 'POST',
@@ -443,19 +449,18 @@
             });
 
             jogadores.push(novoJogador);
-            alert(`Bem-vindo, ${novoJogador.nome}! Você quer jogar na ${novoJogador.pref}. Sua inscrição foi salva no banco de dados.`);
+            alert(`Bem-vindo, ${novoJogador.nome}! Sua inscrição foi salva.`);
             
             nomeInput.value = "";
             
-            if (document.getElementById("area-tecnico").style.display === "block") {
-                atualizarPrancheta();
-                atualizarSelectsDeFuncoes();
-            }
+            atualizarPrancheta();
+            atualizarSelectsDeFuncoes();
+            atualizarListaGerenciamento();
             renderizarCampo();
 
         } catch (error) {
             console.error("Erro ao salvar:", error);
-            alert("Erro ao conectar com a planilha. Verifique sua internet.");
+            alert("Erro ao conectar com a planilha.");
         }
     }
 
@@ -466,9 +471,10 @@
             document.getElementById("senha-tecnico").value = "";
             mudarModalidade(); 
             atualizarSelectsDeFuncoes();
+            atualizarListaGerenciamento();
             alert("Bem-vindo, Professor! A prancheta é sua.");
         } else {
-            alert("Senha incorreta. Só o técnico sabe a senha!");
+            alert("Senha incorreta!");
         }
     }
 
@@ -496,6 +502,8 @@
     function atualizarPrancheta() {
         const modalidade = document.getElementById("select-modalidade").value;
         const formacao = document.getElementById("select-formacao").value;
+        if (!formacao) return;
+        
         const posicoes = formacoes[modalidade][formacao];
         const containerInputs = document.getElementById("escalacao-inputs");
         
@@ -557,6 +565,54 @@
         });
     }
 
+    function atualizarListaGerenciamento() {
+        const lista = document.getElementById("lista-gerenciar-jogadores");
+        lista.innerHTML = "";
+        
+        if (jogadores.length === 0) {
+            lista.innerHTML = "<li style='color: var(--cinza); text-align: center; justify-content: center;'>Nenhum jogador inscrito.</li>";
+            return;
+        }
+        
+        jogadores.forEach(jog => {
+            const li = document.createElement("li");
+            li.innerHTML = `
+                <span><b>${jog.nome}</b> (${jog.pref})</span>
+                <button onclick="removerJogador('${jog.id}')" style="background: #cc0000; width: auto; padding: 5px 10px; font-size: 0.8rem; margin: 0; text-transform: none;">Remover</button>
+            `;
+            lista.appendChild(li);
+        });
+    }
+
+    function removerJogador(id) {
+        const confirmacao = confirm("Tem certeza de que deseja remover este jogador do elenco de hoje?");
+        if (!confirmacao) return;
+
+        // Remove do array principal
+        jogadores = jogadores.filter(j => j.id !== id);
+        
+        // Se estava escalado em alguma posição, limpa a vaga
+        for (let pos in timeAtual) {
+            if (timeAtual[pos] && timeAtual[pos].id === id) {
+                delete timeAtual[pos];
+            }
+        }
+        
+        // Se tinha função tática, limpa ela também
+        if (funcoesTaticas.capitao === id) funcoesTaticas.capitao = "";
+        if (funcoesTaticas.faltaPerto === id) funcoesTaticas.faltaPerto = "";
+        if (funcoesTaticas.faltaLonge === id) funcoesTaticas.faltaLonge = "";
+        if (funcoesTaticas.tiroMeta === id) funcoesTaticas.tiroMeta = "";
+        if (funcoesTaticas.escDir === id) funcoesTaticas.escDir = "";
+        if (funcoesTaticas.escEsq === id) funcoesTaticas.escEsq = "";
+
+        // Sincroniza todas as telas e atualiza os painéis
+        atualizarPrancheta();
+        atualizarSelectsDeFuncoes();
+        atualizarListaGerenciamento();
+        renderizarCampo();
+    }
+
     async function salvarEscalacao() {
         const modalidade = document.getElementById("select-modalidade").value;
         const formacao = document.getElementById("select-formacao").value;
@@ -565,7 +621,6 @@
         timeAtual = {};
         let dadosParaPlanilha = [];
 
-        // Atualiza os dados táticos na interface
         funcoesTaticas.capitao = document.getElementById("select-capitao").value;
         funcoesTaticas.faltaPerto = document.getElementById("select-falta-perto").value;
         funcoesTaticas.faltaLonge = document.getElementById("select-falta-longe").value;
@@ -578,7 +633,7 @@
             const select = document.getElementById("pos-" + pos.id);
             const inputNum = document.getElementById("num-" + pos.id);
             
-            if (select.value) {
+            if (select && select.value) {
                 const jog = jogadores.find(j => j.id === select.value);
                 timeAtual[pos.id] = { id: select.value, numero: inputNum.value || "-" };
                 
@@ -622,7 +677,6 @@
             }
         });
 
-        // 3. Envia tudo para o Google Sheets
         try {
             await fetch(URL_DA_SUA_API, {
                 method: 'POST',
@@ -630,7 +684,6 @@
                 body: JSON.stringify(dadosParaPlanilha)
             });
             
-            // Atualiza o visual do site
             document.getElementById("display-camisa").textContent = document.getElementById("select-camisa").value;
             document.getElementById("display-formacao").textContent = `Formação: ${formacao} (${modalidade} jogadores)`;
             renderizarCampo();
